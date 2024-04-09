@@ -427,14 +427,26 @@ void main() {
       final RegExp devToolsUriRegExp = RegExp(r'The Flutter DevTools debugger and profiler is available at: (http://[^\s]+)');
       sub = process.stdout.transform(utf8.decoder).listen((String e) {
         if (!completer.isCompleted && devToolsUriRegExp.hasMatch(e)) {
+            print('🚨 Attention: DevTools is available! 🚨');
+            print('Completer is completed: ${completer.isCompleted}');
+            print('Url is ${devToolsUriRegExp.firstMatch(e)!.group(1)}');
           completer.complete(Uri.parse(devToolsUriRegExp.firstMatch(e)!.group(1)!));
         }
       });
+
+      print('waiting for completer');
       final Uri devToolsUri = await completer.future;
       final HttpClient client = HttpClient();
+      print('getting url');
       final HttpClientRequest request = await client.getUrl(devToolsUri);
+
+      print('closing request');
       final HttpClientResponse response = await request.close();
+
+      print('getting content');
       final String content = await response.transform(utf8.decoder).join();
+
+      print('checking content');
       expect(content, contains('DevTools'));
     } finally {
       await sub?.cancel();
