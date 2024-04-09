@@ -201,17 +201,18 @@ class TestCompiler {
               request.mainUri.toFilePath(windows: globals.platform.isWindows);
           final File outputFile = globals.fs.file(outputPath);
 
-          // if (globals.fs.file('$path.dill').existsSync()) {
-          //   kernelReadyToRun = globals.fs.file('$path.dill');
-          // } else {
-          //   kernelReadyToRun = await outputFile.copy('$path.dill');
-          // }
+          final File kernelReadyToRun;
 
           if (globals.fs.file('$path.dill').existsSync()) {
-            globals.fs.file('$path.dill').deleteSync();
+            kernelReadyToRun = globals.fs.file('$path.dill');
+          } else {
+            kernelReadyToRun = await outputFile.copy('$path.dill');
           }
 
-          final File kernelReadyToRun = await outputFile.copy('$path.dill');
+          // if (globals.fs.file('$path.dill').existsSync()) {
+          //   globals.fs.file('$path.dill').deleteSync();
+          // }
+
 
           final File testCache = globals.fs.file(testFilePath);
           if (firstCompile ||
