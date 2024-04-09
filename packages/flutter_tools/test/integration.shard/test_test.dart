@@ -422,7 +422,7 @@ void main() {
     StreamSubscription<String>? sub;
     try {
       process = await _runFlutterTestConcurrent('trivial', automatedTestsDirectory, flutterTestDirectory,
-        extraArguments: const <String>['--start-paused']);
+        extraArguments: const <String>['--start-paused', '--verbose']);
       final Completer<Uri> completer = Completer<Uri>();
       final RegExp devToolsUriRegExp = RegExp(r'The Flutter DevTools debugger and profiler is available at: (http://[^\s]+)');
       sub = process.stdout.transform(utf8.decoder).listen((String e) {
