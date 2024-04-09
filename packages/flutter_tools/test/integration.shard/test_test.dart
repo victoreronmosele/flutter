@@ -426,6 +426,13 @@ void main() {
       final Completer<Uri> completer = Completer<Uri>();
       final RegExp devToolsUriRegExp = RegExp(r'The Flutter DevTools debugger and profiler is available at: (http://[^\s]+)');
       sub = process.stdout.transform(utf8.decoder).listen((String e) {
+print('''
+===============================
+| 🚨 Stdout: $e 🚨 |
+| 🚨 Completer Completed: ${completer.isCompleted} 🚨 |
+| 🚨 DevToolsUriRegExp Match: ${devToolsUriRegExp.hasMatch(e)} 🚨 |
+===============================
+''');
         if (!completer.isCompleted && devToolsUriRegExp.hasMatch(e)) {
             print('🚨 Attention: DevTools is available! 🚨');
             print('Completer is completed: ${completer.isCompleted}');
