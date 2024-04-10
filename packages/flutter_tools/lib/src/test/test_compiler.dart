@@ -205,10 +205,8 @@ class TestCompiler {
           final File kernelReadyToRun;
 
           if (globals.fs.file('$path.dill').existsSync()) {
-            final Uint8List outputFileContent = outputFile.readAsBytesSync();
-
             kernelReadyToRun = globals.fs.file('$path.dill');
-            kernelReadyToRun.writeAsBytesSync(outputFileContent);
+            kernelReadyToRun.writeAsBytesSync(outputFile.readAsBytesSync(), flush: true);
           } else {
             kernelReadyToRun = await outputFile.copy('$path.dill');
           }
