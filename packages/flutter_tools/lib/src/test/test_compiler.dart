@@ -206,7 +206,14 @@ class TestCompiler {
 
           if (globals.fs.file('$path.dill').existsSync()) {
             kernelReadyToRun = globals.fs.file('$path.dill');
-            await kernelReadyToRun.writeAsBytes(await outputFile.readAsBytes(), flush: true);
+            final IOSink kernelReadyToRunWriteSink = kernelReadyToRun.openWrite();
+
+            final Uint8List content = await outputFile.readAsBytes();
+
+            kernelReadyToRunWriteSink.write(content);
+
+            await kernelReadyToRunWriteSink.flush();
+            await kernelReadyToRunWriteSink.close();
           } else {
             kernelReadyToRun = await outputFile.copy('$path.dill');
           }
