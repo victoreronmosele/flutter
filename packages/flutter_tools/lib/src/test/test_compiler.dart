@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:flutter_tools/src/base/error_handling_io.dart';
 import 'package:meta/meta.dart';
 
 import '../artifacts.dart';
@@ -204,19 +205,21 @@ class TestCompiler {
 
           final File kernelReadyToRun;
 
-          if (globals.fs.file('$path.dill').existsSync()) {
-            kernelReadyToRun = globals.fs.file('$path.dill');
-            final IOSink kernelReadyToRunWriteSink = kernelReadyToRun.openWrite();
+      ErrorHandlingFileSystem.deleteIfExists(globals.fs.file('$path.dill'));
 
-            final Uint8List content = await outputFile.readAsBytes();
+          // globals.fs.file('$path.dill').deleteSync();
+          //   kernelReadyToRun = globals.fs.file('$path.dill');
+          //   final IOSink kernelReadyToRunWriteSink = kernelReadyToRun.openWrite();
 
-            kernelReadyToRunWriteSink.write(content);
+          //   final Uint8List content = await outputFile.readAsBytes();
 
-            await kernelReadyToRunWriteSink.flush();
-            await kernelReadyToRunWriteSink.close();
-          } else {
+          //   kernelReadyToRunWriteSink.write(content);
+
+          //   await kernelReadyToRunWriteSink.flush();
+          //   await kernelReadyToRunWriteSink.close();
+          // } else {
             kernelReadyToRun = await outputFile.copy('$path.dill');
-          }
+          // }
 
           final File testCache = globals.fs.file(testFilePath);
           if (firstCompile ||
