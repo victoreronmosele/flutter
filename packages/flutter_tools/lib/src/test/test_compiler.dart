@@ -206,7 +206,7 @@ class TestCompiler {
 
           if (globals.fs.file('$path.dill').existsSync()) {
             kernelReadyToRun = globals.fs.file('$path.dill');
-            kernelReadyToRun.writeAsBytesSync(outputFile.readAsBytesSync(), flush: true);
+            kernelReadyToRun.writeAsBytesSync(await outputFile.readAsBytes(), flush: true);
           } else {
             kernelReadyToRun = await outputFile.copy('$path.dill');
           }
