@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
@@ -204,15 +205,13 @@ class TestCompiler {
           final File kernelReadyToRun;
 
           if (globals.fs.file('$path.dill').existsSync()) {
+            final Uint8List outputFileContent = outputFile.readAsBytesSync();
+
             kernelReadyToRun = globals.fs.file('$path.dill');
+            kernelReadyToRun.writeAsBytesSync(outputFileContent);
           } else {
             kernelReadyToRun = await outputFile.copy('$path.dill');
           }
-
-          // if (globals.fs.file('$path.dill').existsSync()) {
-          //   globals.fs.file('$path.dill').deleteSync();
-          // }
-
 
           final File testCache = globals.fs.file(testFilePath);
           if (firstCompile ||
