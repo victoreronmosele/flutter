@@ -68,11 +68,11 @@ class TestCompiler {
     final Directory outputDillDirectory =
         globals.fs.systemTempDirectory.createTempSync('flutter_test_compiler.');
     outputDill = outputDillDirectory.childFile('output.dill');
-    print(
+    globals.printTrace(
         'Compiler will use the following file as its incremental dill file: ${outputDill.path}');
-    print('Listening to compiler controller...');
+    globals.printTrace('Listening to compiler controller...');
     compilerController.stream.listen(_onCompilationRequest, onDone: () {
-      print('Deleting ${outputDillDirectory.path}...');
+      globals.printTrace('Deleting ${outputDillDirectory.path}...');
       outputDillDirectory.deleteSync(recursive: true);
     });
   }
@@ -91,7 +91,6 @@ class TestCompiler {
   late File outputDill;
 
   Future<String?> compile(Uri mainDart) {
-    print('compile $mainDart');
     final Completer<String?> completer = Completer<String?>();
     if (compilerController.isClosed) {
       return Future<String?>.value();
@@ -150,7 +149,7 @@ class TestCompiler {
     }
     while (compilationQueue.isNotEmpty) {
       final CompilationRequest request = compilationQueue.first;
-      print('Compiling ${request.mainUri}');
+      globals.printTrace('Compiling ${request.mainUri}');
       final Stopwatch compilerTime = Stopwatch()..start();
       final Stopwatch? testTimeRecorderStopwatch =
           testTimeRecorder?.start(TestTimePhases.Compile);
@@ -204,17 +203,11 @@ class TestCompiler {
               request.mainUri.toFilePath(windows: globals.platform.isWindows);
           final File outputFile = globals.fs.file(outputPath);
 
-          print('outputPath is $outputPath');
-
           final File kernelReadyToRun;
 
-          print('path is $path');
-
           if (globals.fs.file('$path.dill').existsSync()) {
-            print('path exists, setting file to location');
             kernelReadyToRun = globals.fs.file('$path.dill');
           } else {
-            print('path doesn\'t exist, copying outputFile to path');
             kernelReadyToRun = await outputFile.copy('$path.dill');
           }
 
@@ -237,7 +230,7 @@ class TestCompiler {
         compiler!.accept();
         compiler!.reset();
       }
-      print(
+      globals.printTrace(
           'Compiling ${request.mainUri} took ${compilerTime.elapsedMilliseconds}ms');
       testTimeRecorder?.stop(
           TestTimePhases.Compile, testTimeRecorderStopwatch!);
