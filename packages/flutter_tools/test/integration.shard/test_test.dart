@@ -397,7 +397,7 @@ void main() {
     StreamSubscription<String>? sub;
     try {
       process = await _runFlutterTestConcurrent('trivial', automatedTestsDirectory, flutterTestDirectory,
-        extraArguments: const <String>['--start-paused', '--serve-observatory']);
+        extraArguments: const <String>['--start-paused', '--serve-observatory', '--verbose']);
       final Completer<Uri> completer = Completer<Uri>();
       final RegExp vmServiceUriRegExp = RegExp(r'((http)?:\/\/)[^\s]+');
       sub = process.stdout.transform(utf8.decoder).listen((String e) {
