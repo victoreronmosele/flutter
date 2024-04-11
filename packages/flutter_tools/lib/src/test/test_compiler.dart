@@ -68,11 +68,11 @@ class TestCompiler {
     final Directory outputDillDirectory =
         globals.fs.systemTempDirectory.createTempSync('flutter_test_compiler.');
     outputDill = outputDillDirectory.childFile('output.dill');
-    globals.printTrace(
+    print(
         'Compiler will use the following file as its incremental dill file: ${outputDill.path}');
-    globals.printTrace('Listening to compiler controller...');
+    print('Listening to compiler controller...');
     compilerController.stream.listen(_onCompilationRequest, onDone: () {
-      globals.printTrace('Deleting ${outputDillDirectory.path}...');
+      print('Deleting ${outputDillDirectory.path}...');
       outputDillDirectory.deleteSync(recursive: true);
     });
   }
@@ -91,6 +91,7 @@ class TestCompiler {
   late File outputDill;
 
   Future<String?> compile(Uri mainDart) {
+    print('compile $mainDart');
     final Completer<String?> completer = Completer<String?>();
     if (compilerController.isClosed) {
       return Future<String?>.value();
@@ -149,7 +150,7 @@ class TestCompiler {
     }
     while (compilationQueue.isNotEmpty) {
       final CompilationRequest request = compilationQueue.first;
-      globals.printTrace('Compiling ${request.mainUri}');
+      print('Compiling ${request.mainUri}');
       final Stopwatch compilerTime = Stopwatch()..start();
       final Stopwatch? testTimeRecorderStopwatch =
           testTimeRecorder?.start(TestTimePhases.Compile);
@@ -203,23 +204,19 @@ class TestCompiler {
               request.mainUri.toFilePath(windows: globals.platform.isWindows);
           final File outputFile = globals.fs.file(outputPath);
 
+          print('outputPath is $outputPath');
+
           final File kernelReadyToRun;
 
-      ErrorHandlingFileSystem.deleteIfExists(globals.fs.file('$path.dill'));
+          print('path is $path');
 
-          // globals.fs.file('$path.dill').deleteSync();
-          //   kernelReadyToRun = globals.fs.file('$path.dill');
-          //   final IOSink kernelReadyToRunWriteSink = kernelReadyToRun.openWrite();
-
-          //   final Uint8List content = await outputFile.readAsBytes();
-
-          //   kernelReadyToRunWriteSink.write(content);
-
-          //   await kernelReadyToRunWriteSink.flush();
-          //   await kernelReadyToRunWriteSink.close();
-          // } else {
+          if (globals.fs.file('$path.dill').existsSync()) {
+            print('path exists, setting file to location');
+            kernelReadyToRun = globals.fs.file('$path.dill');
+          } else {
+            print('path doesn\'t exist, copying outputFile to path');
             kernelReadyToRun = await outputFile.copy('$path.dill');
-          // }
+          }
 
           final File testCache = globals.fs.file(testFilePath);
           if (firstCompile ||
@@ -240,7 +237,7 @@ class TestCompiler {
         compiler!.accept();
         compiler!.reset();
       }
-      globals.printTrace(
+      print(
           'Compiling ${request.mainUri} took ${compilerTime.elapsedMilliseconds}ms');
       testTimeRecorder?.stop(
           TestTimePhases.Compile, testTimeRecorderStopwatch!);
