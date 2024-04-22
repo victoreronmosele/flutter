@@ -451,7 +451,7 @@ class CreateCommand extends CreateBase {
     if (sampleCode != null) {
       _applySample(relativeDir, sampleCode);
     }
-    if (sampleCode != null || emptyArgument) {
+    if (sampleCode != null || (emptyArgument && creatingNewProject)) {
       generatedFileCount += _removeTestDir(relativeDir);
     }
     globals.printStatus('Wrote $generatedFileCount files.');
